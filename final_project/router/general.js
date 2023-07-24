@@ -39,70 +39,163 @@ public_users.post("/register", (req,res) => {
 });
 
 
-// Get the book list available in the shop
+/* Get the book list available in the shop
 public_users.get('/',function (req, res) {
   
-  //const getBooks = new Promise((resolve, reject) => {
+  const getBooks = new Promise((resolve, reject) => {
     
    res.send(JSON.stringify(books,null,4));
 
-  //})
+  });
   
-  //getBooks.then(() => console.log("promise for task 10 resolved"));
+  getBooks.then(() => console.log("promise for task 10 resolved"));
 
   //return res.status(300).json({message: "Yet to be implemented"});
+});*/
+
+// Get the book list available in the shop
+function getAllBooks () {
+
+  return new Promise ((resolve, reject) => {
+
+    resolve (books);
+
+  })
+
+
+};
+
+public_users.get('/',function (req, res) {
+
+  getAllBooks().then(
+
+    (result) => res.send(JSON.stringify(result, null, 4)),
+    (error) => res.send("ERROR")
+
+  )
+
 });
+
+
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
+function getBookByIsbn (isbn) {
 
-  //const getBooksIsbn = new Promise(() => {
+  let book = books[isbn];
+
+  return new Promise((resolve, reject) => {
     
-    const isbn = req.params.isbn;
-    res.send(books[isbn]);
+      if (book) {
 
- // })
-  
-  //getBooksIsbn.then(() => console.log ("promise for tack 11 resolved"));
+        resolve (book);
 
-  //return res.status(300).json({message: "Yet to be implemented"});
+      } else {
+
+        reject ('Unable to find book with this' + isbn);
+
+      }
+
+  })
+
+}; 
+
+public_users.get('/isbn/:isbn',function (req, res) {
+    
+  const isbn = req.params.isbn;
+    
+  getBookByIsbn(isbn).then (
+
+    (bk) =>  res.send(JSON.stringify(bk, null, 4)),
+    (error) => res.send(error)
+
+  )
+
  });
   
-// Get book details based on author
+/* Get book details based on author in maniera asincrona
+public_users.get('/books/author/:author',function (req, res) {
+
+  //funzione asicrona
+  const get_books_author = new Promise((resolve, reject) => {
+
+  //preparo array vuoto e individuo gli sibn
+  let booksbyauthor = [];
+  let isbns = Object.keys(books);
+
+  //per ogni isbn
+  isbns.forEach((isbn) => {
+
+      //se l'autore del lib a quel sibn è uguale a quello della richiesta
+      if(books[isbn]["author"] === req.params.author) {
+          
+          //metti i dati del lib nel array
+          booksbyauthor.push({
+              "isbn":isbn,
+              "title":books[isbn]["title"],
+              "reviews":books[isbn]["reviews"]
+          });
+
+      }
+
+  });
+
+  //quindi mostra array
+  resolve(res.send(JSON.stringify({booksbyauthor}, null, 4)));
+
+  //se non funziona dai errore
+  reject(res.send("The mentioned author does not exist "))
+      
+  });
+
+  //restituita la promise mostra messaggio nella console
+  get_books_author.then(function(){
+
+      console.log("Promise for task 12 is resolved");
+
+  }).catch(function () { 
+      
+      console.log('The mentioned author does not exist');
+
+  });
+
+});*/
+
+//Get book details based on author with callbacks and promises
+function getBooksByAuthor (author){
+
+  let booksByAuthor = [];
+
+  return new Promise((resolve,reject) => {
+
+      for (var isbn in books) {
+
+          let book = books[isbn];
+          if (book.author === author){
+
+              booksByAuthor.push(book);
+
+          }
+
+      }
+
+      resolve(booksByAuthor);  
+
+  })
+
+};
+
 public_users.get('/author/:author',function (req, res) {
     
-    //1 crea array vuoto dove metterai dettagli libro/i
-    let booksByAuthor = [];
+  const author = req.params.author;
+  getBooksByAuthor (author).then(
 
-    //2 individua libri per isbn
-    let isbns = Object.keys(books);
+      result =>res.send(JSON.stringify(result, null, 4))
 
-    //3 per ogni isbn
-    isbns.forEach ((isbn) => {
-
-      //3.1 cerca se l'autore di quel isbn corrisponde a quello della richiesta
-      if (books[isbn]['author'] === req.params.author) {
-
-        //3.1.2 se si mettilo nell array
-        booksByAuthor.push ({
-
-          'isbn'    : isbn,
-          'title'   : books[isbn]['title'],
-          'reviews' : books[isbn]['reviews']
-
-        })
-        
-      }
-    
-    })
-    
-    //4 restituisci l'array
-    res.send(JSON.stringify(booksByAuthor, null, 4));
-
-  //return res.status(300).json({message: "Yet to be implemented"});
+  );
+  
 });
 
-// Get all books based on title
+/* Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   
   //1 crea array vuoto
@@ -132,6 +225,40 @@ public_users.get('/title/:title',function (req, res) {
       res.send(JSON.stringify(booksByTitle, null, 4));
 
 //return res.status(300).json({message: "Yet to be implemented"});
+});*/
+
+//get all books based on Title
+function getBooksByTitle(title){
+
+  let booksByTitle = [];
+
+  return new Promise((resolve,reject)=>{
+
+      for (var isbn in books) {
+
+          let book = books[isbn];
+          if (book.title === title){
+          booksByTitle.push(book);
+      
+      }
+
+    }
+
+    resolve(booksByTitle);  
+
+  })
+
+};
+
+public_users.get('/title/:title',function (req, res) {
+
+  const title = req.params.title;
+  getBooksByTitle(title).then(
+
+      result =>res.send(JSON.stringify(result, null, 4))
+
+  );
+
 });
 
 //  Get book review in base all isbn
