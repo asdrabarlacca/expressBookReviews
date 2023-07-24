@@ -20,7 +20,7 @@ public_users.post("/register", (req,res) => {
           users.push({'username':username,'password':password});
 
           //2.1.2 segnala che la registrazione è amdata a buon fine
-          return res.status(200).json({message: 'User registered successfully. You can logIn'});
+          return res.status(200).json({message: 'User  ' + username +' registered successfully. You can logIn'});
 
       //2.2 restituisci errore   
       } else {
@@ -40,38 +40,36 @@ public_users.post("/register", (req,res) => {
 
 
 // Get the book list available in the shop
-public_users.get('/async/',function (req, res) {
+public_users.get('/',function (req, res) {
   
-  const getBooks = new Promise((resolve, reject) => {
+  //const getBooks = new Promise((resolve, reject) => {
     
-    resolve (res.send(JSON.stringify(books,null,4)));
+   res.send(JSON.stringify(books,null,4));
 
-  })
+  //})
   
-  getBooks.then(() => console.log("promise for task 10 resolved"));
+  //getBooks.then(() => console.log("promise for task 10 resolved"));
 
   //return res.status(300).json({message: "Yet to be implemented"});
 });
 
 // Get book details based on ISBN
-public_users.get('/async/isbn/:isbn',function (req, res) {
+public_users.get('/isbn/:isbn',function (req, res) {
 
-  const getBooksIsbn = new Promise(() => {
+  //const getBooksIsbn = new Promise(() => {
     
     const isbn = req.params.isbn;
     res.send(books[isbn]);
 
-  })
+ // })
   
-  getBooksIsbn.then(() => console.log ("promise for tack 11 resolved"));
+  //getBooksIsbn.then(() => console.log ("promise for tack 11 resolved"));
 
   //return res.status(300).json({message: "Yet to be implemented"});
  });
   
 // Get book details based on author
-public_users.get('/async/author/:author',function (req, res) {
-
-  const getBooksByAuthor = new Promise(() => {
+public_users.get('/author/:author',function (req, res) {
     
     //1 crea array vuoto dove metterai dettagli libro/i
     let booksByAuthor = [];
@@ -99,18 +97,13 @@ public_users.get('/async/author/:author',function (req, res) {
     })
     
     //4 restituisci l'array
-    res.send(JSON.stringify({booksByAuthor}, null, 4));
+    res.send(JSON.stringify(booksByAuthor, null, 4));
 
-  });
-  
-  getBooksByAuthor.then(() => console.log ('promise for task 12 resolved'));
   //return res.status(300).json({message: "Yet to be implemented"});
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-  
-  const getBooksByTitle = new Promise (() => {
   
   //1 crea array vuoto
       let booksByTitle = [];
@@ -136,11 +129,7 @@ public_users.get('/title/:title',function (req, res) {
       });
 
       //4 restituisci array
-      res.send(JSON.stringify({booksByTitle}, null, 4));
-
-  });
-
-  getBooksByTitle.then(() => console.log("promise for task 12 resolved"));
+      res.send(JSON.stringify(booksByTitle, null, 4));
 
 //return res.status(300).json({message: "Yet to be implemented"});
 });
