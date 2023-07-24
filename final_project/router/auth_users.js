@@ -79,7 +79,7 @@ regd_users.post("/login", (req,res) => {
         req.session.authorization = {accessToken, username}
 
         //3.3 restituisci messaggio di successo
-        return res.status(200).send({message: 'User successfully logged in'});
+        return res.status(200).send({message: 'User ' + username + ' successfully logged in'});
 
     //4 altrimenti
     } else {
